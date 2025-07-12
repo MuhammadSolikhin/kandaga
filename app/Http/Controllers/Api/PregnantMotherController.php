@@ -19,19 +19,19 @@ class PregnantMotherController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'bpjs_number' => 'nullable|string',
+            'bpjs_number' => 'required|string',
             'nik' => 'required|string|unique:pregnant_mothers',
-            'phone_number' => 'nullable|string',
-            'address' => 'nullable|string',
-            'kelurahan' => 'nullable|string',
-            'pre_pregnancy_weight' => 'nullable|numeric',
-            'current_weight' => 'nullable|numeric',
-            'height' => 'nullable|numeric',
-            'age' => 'nullable|integer',
-            'hemoglobin' => 'nullable|numeric',
-            'lila' => 'nullable|numeric',
-            'blood_pressure' => 'nullable|string',
-            'gestational_age' => 'nullable|integer',
+            'phone_number' => 'required|string',
+            'address' => 'required|string',
+            'kelurahan' => 'required|string',
+            'pre_pregnancy_weight' => 'required|numeric',
+            'current_weight' => 'required|numeric',
+            'height' => 'required|numeric',
+            'age' => 'required|integer',
+            'hemoglobin' => 'required|numeric',
+            'lila' => 'required|numeric',
+            'blood_pressure' => 'required|string',
+            'gestational_age' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
@@ -43,7 +43,7 @@ class PregnantMotherController extends Controller
 
         $validated = $validator->validated();
 
-        // Hitung BMI jika tinggi dan berat tersedia
+        // Hitung BMI dari berat badan saat ini (current_weight)
         $bmi = null;
         $noteParts = [];
 
@@ -66,14 +66,35 @@ class PregnantMotherController extends Controller
             $noteParts[] = "BMI Anda: $bmi - $bmiStatus";
         }
 
+        // Hitung IMT jika usia kandungan ≤ 12 minggu
+        if (
+            !empty($validated['pre_pregnancy_weight']) &&
+            !empty($validated['height']) &&
+            (!isset($validated['gestational_age']) || $validated['gestational_age'] <= 12)
+        ) {
+            $height_m = $validated['height'] / 100;
+            $imt = round($validated['pre_pregnancy_weight'] / ($height_m ** 2), 2);
+
+            // Kategori & Rekomendasi kenaikan berat badan
+            if ($imt < 18.5) {
+                $imtStatus = "Underweight. Rekomendasi kenaikan berat badan 13-18 kg.";
+            } elseif ($imt < 25) {
+                $imtStatus = "Normal. Rekomendasi kenaikan berat badan 11-16 kg.";
+            } elseif ($imt < 30) {
+                $imtStatus = "Overweight. Rekomendasi kenaikan berat badan 7-11 kg.";
+            } else {
+                $imtStatus = "Obesitas. Rekomendasi kenaikan berat badan 5-9 kg.";
+            }
+
+            $noteParts[] = "IMT Anda: $imt - $imtStatus";
+        }
+
         // Interpretasi HB
         if (!empty($validated['hemoglobin'])) {
             $hb = $validated['hemoglobin'];
-            if ($hb < 11) {
-                $hbStatus = "Rendah (Anemia), perhatikan asupan zat besi.";
-            } else {
-                $hbStatus = "Normal.";
-            }
+            $hbStatus = $hb < 11
+                ? "Rendah (Anemia), perhatikan asupan zat besi."
+                : "Normal.";
             $noteParts[] = "HB: $hb g/dL - $hbStatus";
         }
 
@@ -82,7 +103,7 @@ class PregnantMotherController extends Controller
             $noteParts[] = "Usia: {$validated['age']} tahun - Pastikan asupan nutrisi sesuai kebutuhan.";
         }
 
-        // Gabungkan catatan
+        // Gabungkan semua catatan
         $validated['note'] = implode("\n", $noteParts);
 
         $ibuHamil = PregnantMother::create($validated);
