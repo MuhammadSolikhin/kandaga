@@ -98,6 +98,16 @@ class PregnantMotherController extends Controller
             $noteParts[] = "HB: $hb g/dL - $hbStatus";
         }
 
+        // Interpretasi risiko KEK berdasarkan LILA
+        if (!empty($validated['lila'])) {
+            $lila = $validated['lila'];
+            $kekStatus = $lila < 23.5
+                ? "Berisiko KEK (LILA < 23.5 cm), perlu intervensi gizi dan pemantauan ketat."
+                : "Tidak berisiko KEK (LILA ≥ 23.5 cm).";
+            $noteParts[] = "LILA: $lila cm - $kekStatus";
+        }
+
+
         // Catatan usia
         if (!empty($validated['age'])) {
             $noteParts[] = "Usia: {$validated['age']} tahun - Pastikan asupan nutrisi sesuai kebutuhan.";
