@@ -12,25 +12,25 @@ return new class extends Migration {
     {
         Schema::create('pregnant_mothers', function (Blueprint $table) {
             $table->id();
-            $table->string('bpjs_number')->nullable(); // No. BPJS
+            $table->string('bpjs_number'); // No. BPJS
             $table->string('nik')->unique(); // NIK
-            $table->string('phone_number')->nullable(); // No. Telepon
-            $table->text('address')->nullable(); // Alamat
-            $table->string('kelurahan')->nullable(); // Kelurahan
-            $table->float('pre_pregnancy_weight')->nullable(); // Berat Badan Sebelum Mengandung (kg)
+            $table->string('phone_number'); // No. Telepon
+            $table->text('address'); // Alamat
+            $table->string('kelurahan'); // Kelurahan
+            $table->float('pre_pregnancy_weight'); // Berat Badan Sebelum Mengandung (kg)
 
             // Data saat ini
-            $table->float('current_weight')->nullable(); // Berat Badan (kg)
-            $table->float('height')->nullable(); // Tinggi Badan (cm)
-            $table->integer('age')->nullable(); // Usia (tahun)
-            $table->float('hemoglobin')->nullable(); // HB (Hemoglobin)
-            $table->float('lila')->nullable(); // LILA (Lingkar Lengan Atas) cm
+            $table->float('current_weight'); // Berat Badan (kg)
+            $table->float('height'); // Tinggi Badan (cm)
+            $table->integer('age'); // Usia (tahun)
+            $table->float('hemoglobin'); // HB (Hemoglobin)
+            $table->float('lila'); // LILA (Lingkar Lengan Atas) cm
 
-            $table->string('blood_pressure')->nullable(); // Tekanan Darah
-            $table->integer('gestational_age')->nullable(); // Usia Kandungan (minggu)
+            $table->string('blood_pressure'); // Tekanan Darah
+            $table->integer('gestational_age'); // Usia Kandungan (minggu)
 
-            $table->float('bmi')->nullable();                  // BMI hasil hitung
-            $table->text('note')->nullable();                  // Catatan 
+            $table->float('bmi');                  // BMI hasil hitung
+            $table->text('note');                  // Catatan 
 
             $table->timestamps();
         });
