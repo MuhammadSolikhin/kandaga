@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('full_name');
             $table->text('address');
+             $table->string('jenis');
             $table->date('consultation_date');
             $table->text('message')->nullable(); // pesan boleh kosong
             $table->timestamps();

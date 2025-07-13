@@ -23,6 +23,7 @@ class AppointmentController extends Controller
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|string|max:255',
             'address' => 'required|string',
+            'jenis' => 'required|string',
             'consultation_date' => 'required|date|after_or_equal:today',
             'message' => 'nullable|string',
         ]);

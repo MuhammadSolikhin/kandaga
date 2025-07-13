@@ -12,6 +12,7 @@ class Appointment extends Model
     protected $fillable = [
         'full_name',
         'address',
+        'jenis', // jenis appointment, e.g., 'bumil' or 'bayi'
         'consultation_date',
         'message',
     ];
